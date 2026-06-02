@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For My Love - I'm Sorry</title>
+    <script src="/socket.io/socket.io.js"></script>
     <style>
         * {
             margin: 0;
@@ -130,6 +131,12 @@
             transform: scale(0);
             animation: heartbeat 1.5s ease-in-out infinite;
             display: inline-block;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .big-heart:hover {
+            transform: scale(1.2);
         }
 
         @keyframes heartbeat {
@@ -153,6 +160,12 @@
             opacity: 0;
             transform: rotate(-10deg);
             box-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+            animation: rotate-crown 3s ease-in-out infinite;
+        }
+
+        @keyframes rotate-crown {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
         }
 
         .photo-placeholder {
@@ -198,6 +211,12 @@
             margin: 20px;
             display: inline-block;
             opacity: 0;
+            animation: bloom 2s ease-out forwards;
+        }
+
+        @keyframes bloom {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
         .progress-bar {
@@ -220,17 +239,138 @@
             z-index: 100;
         }
 
+        /* Interactive elements */
+        .love-counter {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5em;
+            background: rgba(255, 107, 157, 0.3);
+            padding: 15px 25px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 157, 0.5);
+            z-index: 100;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .love-counter:hover {
+            transform: scale(1.1);
+            background: rgba(255, 107, 157, 0.5);
+        }
+
+        .message-input-container {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .message-input {
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 107, 157, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1em;
+            backdrop-filter: blur(10px);
+            width: 300px;
+        }
+
+        .message-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .send-btn {
+            padding: 15px 30px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(45deg, #ff6b9d, #ffa07a);
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+        }
+
+        .messages-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 300px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            z-index: 100;
+            border: 2px solid rgba(255, 107, 157, 0.3);
+        }
+
+        .message-item {
+            background: rgba(255, 107, 157, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            z-index: 100;
+            background: rgba(255, 107, 157, 0.3);
+            padding: 10px;
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 157, 0.5);
+            transition: all 0.3s;
+        }
+
+        .music-control:hover {
+            transform: scale(1.2);
+        }
+
         @media (max-width: 768px) {
             .title { font-size: 2.5em; }
             .message-text { font-size: 1.1em; }
             .sorry-text { font-size: 2.5em; }
             .big-heart { font-size: 60px; }
+            .love-counter { font-size: 1.2em; padding: 10px 20px; }
+            .message-input-container { flex-direction: column; bottom: 100px; }
+            .message-input { width: 250px; }
+            .messages-container { width: 250px; right: 10px; }
         }
     </style>
 </head>
 <body>
     <div class="stars" id="stars"></div>
     <div class="floating-hearts" id="hearts"></div>
+    
+    <div class="love-counter" id="loveCounter" onclick="sendLove()">
+        💕 Love Count: <span id="loveCount">0</span>
+    </div>
+    
+    <div class="music-control" id="musicControl" onclick="toggleMusic()">🔇</div>
     
     <div class="container">
         <div class="main-content">
@@ -249,7 +389,7 @@
                 </p>
             </div>
             
-            <div class="big-heart" id="bigHeart">❤️</div>
+            <div class="big-heart" id="bigHeart" onclick="sendLove()">❤️</div>
             
             <div class="sorry-text" id="sorryText">I'M SO SORRY</div>
             
@@ -275,13 +415,91 @@
         </div>
     </div>
     
+    <div class="message-input-container" id="messageInputContainer">
+        <input type="text" class="message-input" id="messageInput" placeholder="Send a love message..." maxlength="100">
+        <button class="send-btn" onclick="sendMessage()">Send 💕</button>
+    </div>
+    
+    <div class="messages-container" id="messagesContainer">
+        <h3 style="margin-bottom: 15px; color: #ffd700;">💌 Love Messages</h3>
+        <div id="messagesList"></div>
+    </div>
+    
     <div class="progress-bar" id="progressBar"></div>
     <div class="timer-text" id="timerText">0s / 30s</div>
 
+    <!-- Background music (optional) -->
+    <audio id="bgMusic" loop>
+        <source src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7////////////////////////////////////////////////////////////AAAAAExhdmM1OC4xMzQAAAAAAAAAAAAAAAAkAAAAAAAAA4S/T4LKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7kGQAD/AAAGkAAAAIAAANIAAAAQAAAaQAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//uQZAoP8AAAaQAAAAgAAA0gAAABAAABpAAAACAAADSAAAAEVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mpeg">
+    </audio>
+
     <script>
+        // Socket.IO connection
+        const socket = io();
+        
+        // Update love count
+        socket.on('loveCount', (count) => {
+            document.getElementById('loveCount').textContent = count;
+        });
+        
+        // Receive messages
+        socket.on('messages', (msgs) => {
+            const messagesList = document.getElementById('messagesList');
+            messagesList.innerHTML = '';
+            msgs.forEach(msg => addMessageToList(msg.text));
+        });
+        
+        socket.on('newMessage', (msg) => {
+            addMessageToList(msg.text);
+        });
+        
+        function sendLove() {
+            socket.emit('sendLove');
+            createBurstHearts();
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (text) {
+                socket.emit('sendMessage', { text });
+                input.value = '';
+            }
+        }
+        
+        function addMessageToList(text) {
+            const messagesList = document.getElementById('messagesList');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message-item';
+            msgDiv.textContent = text;
+            messagesList.appendChild(msgDiv);
+            messagesList.scrollTop = messagesList.scrollHeight;
+        }
+        
+        let isPlaying = false;
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const control = document.getElementById('musicControl');
+            if (isPlaying) {
+                music.pause();
+                control.textContent = '🔇';
+            } else {
+                music.play().catch(() => {});
+                control.textContent = '🎵';
+            }
+            isPlaying = !isPlaying;
+        }
+        
+        function createBurstHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => createHeart(), i * 50);
+            }
+        }
+
         // Create stars
         const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 150; i++) {
             const star = document.createElement('div');
             star.className = 'star';
             star.style.left = Math.random() * 100 + '%';
@@ -313,53 +531,67 @@
         // Animation timeline
         const timeline = [
             { time: 0, action: () => {
-                document.getElementById('title').style.transition = 'all 1.5s ease-out';
-                document.getElementById('title').style.opacity = '1';
-                document.getElementById('title').style.transform = 'translateY(0)';
+                const title = document.getElementById('title');
+                title.style.transition = 'all 1.5s ease-out';
+                title.style.opacity = '1';
+                title.style.transform = 'translateY(0)';
             }},
             { time: 2000, action: () => {
-                document.getElementById('photoFrame').style.transition = 'all 1s ease-out';
-                document.getElementById('photoFrame').style.opacity = '1';
-                document.getElementById('photoFrame').style.transform = 'rotate(0deg)';
+                const photoFrame = document.getElementById('photoFrame');
+                photoFrame.style.transition = 'all 1s ease-out';
+                photoFrame.style.opacity = '1';
+                photoFrame.style.transform = 'rotate(-10deg) scale(1)';
             }},
             { time: 4000, action: () => {
-                document.getElementById('messageBox').style.transition = 'all 1.5s ease-out';
-                document.getElementById('messageBox').style.opacity = '1';
-                document.getElementById('messageBox').style.transform = 'scale(1)';
+                const messageBox = document.getElementById('messageBox');
+                messageBox.style.transition = 'all 1.5s ease-out';
+                messageBox.style.opacity = '1';
+                messageBox.style.transform = 'scale(1)';
             }},
             { time: 8000, action: () => {
-                document.getElementById('bigHeart').style.transition = 'all 1s ease-out';
-                document.getElementById('bigHeart').style.opacity = '1';
-                document.getElementById('bigHeart').style.transform = 'scale(1)';
+                const bigHeart = document.getElementById('bigHeart');
+                bigHeart.style.transition = 'all 1s ease-out';
+                bigHeart.style.opacity = '1';
+                bigHeart.style.transform = 'scale(1)';
             }},
             { time: 10000, action: () => {
-                document.getElementById('sorryText').style.transition = 'all 1.5s ease-out';
-                document.getElementById('sorryText').style.opacity = '1';
-                document.getElementById('sorryText').style.transform = 'translateY(0)';
+                const sorryText = document.getElementById('sorryText');
+                sorryText.style.transition = 'all 1.5s ease-out';
+                sorryText.style.opacity = '1';
+                sorryText.style.transform = 'translateY(0)';
             }},
             { time: 14000, action: () => {
-                document.getElementById('promiseSection').style.transition = 'all 1.5s ease-out';
-                document.getElementById('promiseSection').style.opacity = '1';
-                document.getElementById('promiseSection').style.transform = 'translateY(0)';
+                const promiseSection = document.getElementById('promiseSection');
+                promiseSection.style.transition = 'all 1.5s ease-out';
+                promiseSection.style.opacity = '1';
+                promiseSection.style.transform = 'translateY(0)';
             }},
             { time: 20000, action: () => {
-                document.getElementById('finalMessage').style.transition = 'all 2s ease-out';
-                document.getElementById('finalMessage').style.opacity = '1';
-                document.getElementById('finalMessage').style.transform = 'scale(1)';
+                const finalMessage = document.getElementById('finalMessage');
+                finalMessage.style.transition = 'all 2s ease-out';
+                finalMessage.style.opacity = '1';
+                finalMessage.style.transform = 'scale(1)';
             }},
             { time: 22000, action: () => {
-                document.getElementById('rose1').style.transition = 'all 1s ease-out';
-                document.getElementById('rose1').style.opacity = '1';
+                const rose1 = document.getElementById('rose1');
+                rose1.style.opacity = '1';
             }},
             { time: 23000, action: () => {
-                document.getElementById('rose2').style.transition = 'all 1s ease-out';
-                document.getElementById('rose2').style.opacity = '1';
+                const rose2 = document.getElementById('rose2');
+                rose2.style.opacity = '1';
             }},
             { time: 24000, action: () => {
-                document.getElementById('rose3').style.transition = 'all 1s ease-out';
-                document.getElementById('rose3').style.opacity = '1';
+                const rose3 = document.getElementById('rose3');
+                rose3.style.opacity = '1';
+            }},
+            { time: 26000, action: () => {
+                const messageInputContainer = document.getElementById('messageInputContainer');
+                messageInputContainer.style.opacity = '1';
             }}
         ];
+
+        // Mark timeline items as not executed
+        timeline.forEach(item => item.executed = false);
 
         // Start animation
         let startTime = Date.now();
@@ -404,6 +636,11 @@
 
         // Start the main animation
         setTimeout(animate, 1000);
+        
+        // Enter key to send message
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
     </script>
 </body>
 </html>
