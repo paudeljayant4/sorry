@@ -1,0 +1,1 @@
+Nothing needs to be added to .gitignore since only a single HTML file (`apology.html`) was added, which is a source file and not a build artifact, dependency, or temporary file.

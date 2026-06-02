@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love - I'm Sorry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: #ff6b9d;
+            animation: float-up 4s ease-in infinite;
+            opacity: 0;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+
+        .main-content {
+            z-index: 10;
+            text-align: center;
+            padding: 40px;
+            max-width: 800px;
+        }
+
+        .title {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(50px);
+            background: linear-gradient(45deg, #ff6b9d, #ffa07a, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+        }
+
+        .message-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            opacity: 0;
+            transform: scale(0.8);
+            box-shadow: 0 0 50px rgba(255, 107, 157, 0.3);
+        }
+
+        .message-text {
+            font-size: 1.4em;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .big-heart {
+            font-size: 100px;
+            margin: 30px 0;
+            opacity: 0;
+            transform: scale(0);
+            animation: heartbeat 1.5s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.15); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.15); }
+            70% { transform: scale(1); }
+        }
+
+        .photo-frame {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid #ff6b9d;
+            margin: 30px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 107, 157, 0.2);
+            opacity: 0;
+            transform: rotate(-10deg);
+            box-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+        }
+
+        .photo-placeholder {
+            font-size: 80px;
+        }
+
+        .sorry-text {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 30px 0;
+            opacity: 0;
+            transform: translateY(100px);
+            color: #ff6b9d;
+            text-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+        }
+
+        .promise-section {
+            margin-top: 40px;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .promise {
+            font-size: 1.3em;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 160, 122, 0.2);
+            border-radius: 10px;
+            border-left: 4px solid #ffa07a;
+        }
+
+        .final-message {
+            font-size: 2em;
+            margin-top: 50px;
+            opacity: 0;
+            transform: scale(0.5);
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+
+        .rose {
+            font-size: 60px;
+            margin: 20px;
+            display: inline-block;
+            opacity: 0;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b9d, #ffd700);
+            z-index: 100;
+            transition: width 0.1s linear;
+        }
+
+        .timer-text {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 1.2em;
+            opacity: 0.7;
+            z-index: 100;
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 2.5em; }
+            .message-text { font-size: 1.1em; }
+            .sorry-text { font-size: 2.5em; }
+            .big-heart { font-size: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="floating-hearts" id="hearts"></div>
+    
+    <div class="container">
+        <div class="main-content">
+            <h1 class="title" id="title">To The Best Girl In The World 💕</h1>
+            
+            <div class="photo-frame" id="photoFrame">
+                <div class="photo-placeholder">👑</div>
+            </div>
+            
+            <div class="message-box" id="messageBox">
+                <p class="message-text">
+                    My dearest love,<br><br>
+                    I know I made a mistake, and I take full responsibility for my actions. 
+                    You mean everything to me, and seeing you hurt because of me breaks my heart.<br><br>
+                    You deserve nothing but love, respect, and happiness - and I promise to do better.
+                </p>
+            </div>
+            
+            <div class="big-heart" id="bigHeart">❤️</div>
+            
+            <div class="sorry-text" id="sorryText">I'M SO SORRY</div>
+            
+            <div class="promise-section" id="promiseSection">
+                <div class="promise">✨ I promise to listen more carefully</div>
+                <div class="promise">✨ I promise to communicate better</div>
+                <div class="promise">✨ I promise to always cherish you</div>
+                <div class="promise">✨ I promise to never take you for granted</div>
+            </div>
+            
+            <div class="final-message" id="finalMessage">
+                You are my everything, my queen, my world 🌹
+                <div style="margin-top: 20px;">
+                    <span class="rose" id="rose1">🌹</span>
+                    <span class="rose" id="rose2">💐</span>
+                    <span class="rose" id="rose3">🌹</span>
+                </div>
+                <p style="font-size: 0.7em; margin-top: 30px; color: #ff6b9d;">
+                    I love you more than words can express<br>
+                    Forever yours 💍
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="timer-text" id="timerText">0s / 30s</div>
+
+    <script>
+        // Create stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.width = Math.random() * 3 + 1 + 'px';
+            star.style.height = star.style.width;
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Create floating hearts
+        const heartsContainer = document.getElementById('hearts');
+        const heartEmojis = ['❤️', '💕', '💖', '💗', '💓', '💞', '💘', '💝'];
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            heartsContainer.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        // Animation timeline
+        const timeline = [
+            { time: 0, action: () => {
+                document.getElementById('title').style.transition = 'all 1.5s ease-out';
+                document.getElementById('title').style.opacity = '1';
+                document.getElementById('title').style.transform = 'translateY(0)';
+            }},
+            { time: 2000, action: () => {
+                document.getElementById('photoFrame').style.transition = 'all 1s ease-out';
+                document.getElementById('photoFrame').style.opacity = '1';
+                document.getElementById('photoFrame').style.transform = 'rotate(0deg)';
+            }},
+            { time: 4000, action: () => {
+                document.getElementById('messageBox').style.transition = 'all 1.5s ease-out';
+                document.getElementById('messageBox').style.opacity = '1';
+                document.getElementById('messageBox').style.transform = 'scale(1)';
+            }},
+            { time: 8000, action: () => {
+                document.getElementById('bigHeart').style.transition = 'all 1s ease-out';
+                document.getElementById('bigHeart').style.opacity = '1';
+                document.getElementById('bigHeart').style.transform = 'scale(1)';
+            }},
+            { time: 10000, action: () => {
+                document.getElementById('sorryText').style.transition = 'all 1.5s ease-out';
+                document.getElementById('sorryText').style.opacity = '1';
+                document.getElementById('sorryText').style.transform = 'translateY(0)';
+            }},
+            { time: 14000, action: () => {
+                document.getElementById('promiseSection').style.transition = 'all 1.5s ease-out';
+                document.getElementById('promiseSection').style.opacity = '1';
+                document.getElementById('promiseSection').style.transform = 'translateY(0)';
+            }},
+            { time: 20000, action: () => {
+                document.getElementById('finalMessage').style.transition = 'all 2s ease-out';
+                document.getElementById('finalMessage').style.opacity = '1';
+                document.getElementById('finalMessage').style.transform = 'scale(1)';
+            }},
+            { time: 22000, action: () => {
+                document.getElementById('rose1').style.transition = 'all 1s ease-out';
+                document.getElementById('rose1').style.opacity = '1';
+            }},
+            { time: 23000, action: () => {
+                document.getElementById('rose2').style.transition = 'all 1s ease-out';
+                document.getElementById('rose2').style.opacity = '1';
+            }},
+            { time: 24000, action: () => {
+                document.getElementById('rose3').style.transition = 'all 1s ease-out';
+                document.getElementById('rose3').style.opacity = '1';
+            }}
+        ];
+
+        // Start animation
+        let startTime = Date.now();
+        let animationComplete = false;
+
+        function animate() {
+            if (animationComplete) return;
+
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / 30000, 1);
+            
+            // Update progress bar
+            document.getElementById('progressBar').style.width = (progress * 100) + '%';
+            document.getElementById('timerText').textContent = Math.floor(elapsed / 1000) + 's / 30s';
+
+            // Execute timeline actions
+            timeline.forEach(item => {
+                if (elapsed >= item.time && !item.executed) {
+                    item.action();
+                    item.executed = true;
+                }
+            });
+
+            // Create hearts continuously
+            if (elapsed < 30000) {
+                if (Math.random() < 0.1) {
+                    createHeart();
+                }
+                requestAnimationFrame(animate);
+            } else {
+                animationComplete = true;
+                document.getElementById('timerText').textContent = 'I Love You Forever 💕';
+                // Continue creating hearts even after animation
+                setInterval(createHeart, 500);
+            }
+        }
+
+        // Initialize with some hearts
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createHeart, i * 300);
+        }
+
+        // Start the main animation
+        setTimeout(animate, 1000);
+    </script>
+</body>
+</html>
