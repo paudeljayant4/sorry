@@ -30,7 +30,6 @@
         justify-content: center;
         align-items: center;
         font-family: 'Playfair Display', serif;
-        overflow: hidden;
         perspective: 1000px;
         color: var(--text-color);
       }
@@ -339,7 +338,6 @@
         <div class="bar"></div>
       </div>
       <div class="photo-frame">
-        <!-- REPLACE THIS SRC WITH YOUR GF'S PHOTO URL -->
         <img
           src="https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
           alt="My Love"
@@ -356,9 +354,9 @@
           My Dearest,
         </h3>
         <p style="font-size: 1rem; text-align: left;">
-          Words cannot express how much you mean to me. You are the light in my darkest days and the smile on my
-          face. I made a mistake, but my love for you is stronger than any error. Please let me make it up to you.
-          You are my world, my queen, and my everything.
+          Words cannot express how much you mean to me. You are the light in my darkest days and the smile on my face.
+          I made a mistake, but my love for you is stronger than any error. Please let me make it up to you. You are my
+          world, my queen, and my everything.
           <br /><br />
           Forever yours,<br />
           <span style="color: #ff7eb9; font-weight: bold;">[Your Name]</span>
@@ -381,7 +379,6 @@
         }
       }
 
-      // Start typing after a short delay
       setTimeout(typeWriter, 1000);
 
       // --- 2. PIANO SYNTHESIZER (Web Audio API) ---
@@ -389,19 +386,18 @@
       let isPlaying = false;
       let melodyInterval;
 
-      // A gentle, emotional melody (Notes: C4, E4, G4, B4, etc.)
       const notes = [
-        { freq: 261.63, dur: 400 }, // C4
-        { freq: 329.63, dur: 400 }, // E4
-        { freq: 392.0, dur: 400 }, // G4
-        { freq: 523.25, dur: 800 }, // C5
-        { freq: 392.0, dur: 400 }, // G4
-        { freq: 329.63, dur: 400 }, // E4
-        { freq: 261.63, dur: 800 }, // C4
-        { freq: 293.66, dur: 400 }, // D4
-        { freq: 349.23, dur: 400 }, // F4
-        { freq: 440.0, dur: 400 }, // A4
-        { freq: 523.25, dur: 1200 }, // C5 (hold)
+        { freq: 261.63, dur: 400 },
+        { freq: 329.63, dur: 400 },
+        { freq: 392.0, dur: 400 },
+        { freq: 523.25, dur: 800 },
+        { freq: 392.0, dur: 400 },
+        { freq: 329.63, dur: 400 },
+        { freq: 261.63, dur: 800 },
+        { freq: 293.66, dur: 400 },
+        { freq: 349.23, dur: 400 },
+        { freq: 440.0, dur: 400 },
+        { freq: 523.25, dur: 1200 },
       ];
 
       function initAudio() {
@@ -416,11 +412,11 @@
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
 
-        osc.type = 'triangle'; // Soft piano-like wave
+        osc.type = 'triangle';
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05); // Attack
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration / 1000); // Decay
+        gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration / 1000);
 
         osc.connect(gainNode);
         gainNode.connect(audioCtx.destination);
@@ -430,8 +426,9 @@
 
       function startMusic() {
         initAudio();
-
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
+        }
 
         document.getElementById('visualizer').style.opacity = '1';
         document.getElementById('musicBtn').innerText = '🎵 Playing...';
@@ -462,14 +459,17 @@
         else startMusic();
       }
 
-      // Auto-start music softly on interaction (browser policy requires click first usually,
-      // but we bind it to the button. Let's try to start gently if they click anywhere first)
+      window.addEventListener('load', () => {
+        startMusic();
+      });
+
       document.body.addEventListener(
         'click',
         () => {
-          if (!audioCtx && !isPlaying) {
-            // Optional: Auto start music on first click anywhere if desired
-            // startMusic();
+          if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => {
+              if (!isPlaying) startMusic();
+            });
           }
         },
         { once: true }
@@ -478,10 +478,8 @@
       // --- 3. CONFETTI ENGINE ---
       const canvas = document.getElementById('confetti-canvas');
       const ctx = canvas.getContext('2d');
-
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-
       let confettiParticles = [];
 
       function createConfetti() {
@@ -503,7 +501,6 @@
 
       function drawConfetti() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         confettiParticles.forEach((p, index) => {
           ctx.save();
           ctx.translate(p.x, p.y);
@@ -520,41 +517,30 @@
             confettiParticles.splice(index, 1);
           }
         });
-
         requestAnimationFrame(drawConfetti);
       }
 
       function forgiveMe() {
-        // Show hidden message
         document.getElementById('loveLetter').classList.add('active');
-
-        // Trigger Confetti
         createConfetti();
-        if (confettiParticles.length <= 100) drawConfetti(); // Start loop if not running
-
-        // Change button text
+        if (confettiParticles.length <= 100) drawConfetti();
         document.querySelector('.btn-primary').innerText = 'I Love You! ❤️';
         document.querySelector('.btn-primary').style.background = 'linear-gradient(45deg, #ff4d8d, #ff0055)';
-
-        // Play a happy chord
         if (!isPlaying) {
           initAudio();
-          playTone(523.25, 1000); // C5
-          setTimeout(() => playTone(659.25, 1000), 100); // E5
-          setTimeout(() => playTone(783.99, 1000), 200); // G5
+          playTone(523.25, 1000);
+          setTimeout(() => playTone(659.25, 1000), 100);
+          setTimeout(() => playTone(783.99, 1000), 200);
         }
       }
 
-      // Resize handler
       window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
       });
 
-      // Create background particles
       function createParticles() {
         const body = document.querySelector('body');
-
         for (let i = 0; i < 50; i++) {
           const p = document.createElement('div');
           p.classList.add('particle');
