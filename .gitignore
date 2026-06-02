@@ -1,5 +1,1 @@
-```
-node_modules/
-package-lock.json
-*.log
-```
+Nothing needs to be added to .gitignore since the changes only include source files (.html, .md, .json, .js) and no build artifacts, dependencies, or temporary files.
