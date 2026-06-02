@@ -1,646 +1,403 @@
-<!DOCTYPE html>
+Invalid `new_str` parameter: <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For My Love - I'm Sorry</title>
-    <script src="/socket.io/socket.io.js"></script>
+    <title>For My Best Girl ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff8fa3;
+            --bg: #fff0f3;
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Georgia', serif;
-            overflow: hidden;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe3e3 100%);
             min-height: 100vh;
-            color: white;
-        }
-
-        .container {
+            overflow-x: hidden;
+            color: #590d22;
             position: relative;
-            width: 100vw;
-            height: 100vh;
+        }
+        /* Floating Background Elements */
+        .bg-shapes {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .shape {
+            position: absolute;
+            background: rgba(255, 77, 109, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
+            position: relative;
         }
-
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
+        .crown-img {
+            width: 120px;
+            animation: bounce 2s infinite;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px rgba(255, 77, 109, 0.5));
         }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 2s ease-in-out infinite;
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        .floating-hearts {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .heart {
-            position: absolute;
-            font-size: 20px;
-            color: #ff6b9d;
-            animation: float-up 4s ease-in infinite;
-            opacity: 0;
-        }
-
-        @keyframes float-up {
-            0% {
-                opacity: 0;
-                transform: translateY(100vh) rotate(0deg);
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-100px) rotate(360deg);
-            }
-        }
-
-        .main-content {
-            z-index: 10;
-            text-align: center;
-            padding: 40px;
-            max-width: 800px;
-        }
-
-        .title {
-            font-size: 3.5em;
-            margin-bottom: 30px;
-            opacity: 0;
-            transform: translateY(50px);
-            background: linear-gradient(45deg, #ff6b9d, #ffa07a, #ffd700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
-        }
-
-        .message-box {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            margin: 20px 0;
-            border: 2px solid rgba(255, 107, 157, 0.3);
-            opacity: 0;
-            transform: scale(0.8);
-            box-shadow: 0 0 50px rgba(255, 107, 157, 0.3);
-        }
-
-        .message-text {
-            font-size: 1.4em;
-            line-height: 1.8;
-            margin-bottom: 20px;
-        }
-
-        .big-heart {
-            font-size: 100px;
-            margin: 30px 0;
-            opacity: 0;
-            transform: scale(0);
-            animation: heartbeat 1.5s ease-in-out infinite;
-            display: inline-block;
+        .heart-beat {
+            font-size: 5rem;
+            color: var(--primary);
+            animation: heartbeat 1.2s infinite;
+            margin: 1rem 0;
             cursor: pointer;
             transition: transform 0.3s;
         }
-
-        .big-heart:hover {
-            transform: scale(1.2);
-        }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            14% { transform: scale(1.15); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.15); }
-            70% { transform: scale(1); }
-        }
-
-        .photo-frame {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            border: 4px solid #ff6b9d;
-            margin: 30px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(255, 107, 157, 0.2);
+        .heart-beat:hover { transform: scale(1.2); }
+        /* Glass Cards */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin: 2rem 0;
+            transform: translateY(20px);
             opacity: 0;
-            transform: rotate(-10deg);
-            box-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
-            animation: rotate-crown 3s ease-in-out infinite;
+            transition: all 0.8s ease-out;
         }
-
-        @keyframes rotate-crown {
-            0%, 100% { transform: rotate(-10deg); }
-            50% { transform: rotate(10deg); }
+        .card.visible {
+            transform: translateY(0);
+            opacity: 1;
         }
-
-        .photo-placeholder {
-            font-size: 80px;
+        /* Typing Effect */
+        .letter-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-align: left;
+            min-height: 150px;
         }
-
-        .sorry-text {
-            font-size: 4em;
-            font-weight: bold;
-            margin: 30px 0;
-            opacity: 0;
-            transform: translateY(100px);
-            color: #ff6b9d;
-            text-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
-        }
-
-        .promise-section {
-            margin-top: 40px;
-            opacity: 0;
-            transform: translateY(50px);
-        }
-
-        .promise {
-            font-size: 1.3em;
-            margin: 15px 0;
-            padding: 15px;
-            background: rgba(255, 160, 122, 0.2);
-            border-radius: 10px;
-            border-left: 4px solid #ffa07a;
-        }
-
-        .final-message {
-            font-size: 2em;
-            margin-top: 50px;
-            opacity: 0;
-            transform: scale(0.5);
-            color: #ffd700;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-        }
-
-        .rose {
-            font-size: 60px;
-            margin: 20px;
+        .cursor {
             display: inline-block;
-            opacity: 0;
-            animation: bloom 2s ease-out forwards;
+            width: 2px;
+            background-color: var(--primary);
+            animation: blink 1s infinite;
         }
-
-        @keyframes bloom {
-            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        /* Photo Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
         }
-
-        .progress-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 0%;
-            height: 5px;
-            background: linear-gradient(90deg, #ff6b9d, #ffd700);
-            z-index: 100;
-            transition: width 0.1s linear;
+        .photo-frame {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: rotate(-3deg);
+            transition: transform 0.3s;
         }
-
-        .timer-text {
+        .photo-frame:nth-child(even) { transform: rotate(3deg); }
+        .photo-frame:hover { transform: scale(1.05) rotate(0); z-index: 10; }
+        .photo-frame img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        /* Interactive Buttons */
+        .btn-group {
+            margin-top: 2rem;
+            position: relative;
+            height: 60px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .btn-yes {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+        }
+        .btn-yes:hover { transform: translateX(-50%) scale(1.1); }
+        
+        .btn-no {
+            background: #e0e0e0;
+            color: #555;
+        }
+        /* Music Player */
+        .music-player {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            font-size: 1.2em;
-            opacity: 0.7;
-            z-index: 100;
-        }
-
-        /* Interactive elements */
-        .love-counter {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            font-size: 1.5em;
-            background: rgba(255, 107, 157, 0.3);
-            padding: 15px 25px;
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 107, 157, 0.5);
-            z-index: 100;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .love-counter:hover {
-            transform: scale(1.1);
-            background: rgba(255, 107, 157, 0.5);
-        }
-
-        .message-input-container {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
+            background: white;
+            padding: 10px;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             display: flex;
+            align-items: center;
             gap: 10px;
-            opacity: 0;
-            transition: opacity 1s;
-        }
-
-        .message-input {
-            padding: 15px 25px;
-            border-radius: 30px;
-            border: 2px solid rgba(255, 107, 157, 0.5);
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1em;
-            backdrop-filter: blur(10px);
-            width: 300px;
-        }
-
-        .message-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .send-btn {
-            padding: 15px 30px;
-            border-radius: 30px;
-            border: none;
-            background: linear-gradient(45deg, #ff6b9d, #ffa07a);
-            color: white;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .send-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
-        }
-
-        .messages-container {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            width: 300px;
-            max-height: 300px;
-            overflow-y: auto;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
             z-index: 100;
-            border: 2px solid rgba(255, 107, 157, 0.3);
-        }
-
-        .message-item {
-            background: rgba(255, 107, 157, 0.2);
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .music-control {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            font-size: 2em;
             cursor: pointer;
-            z-index: 100;
-            background: rgba(255, 107, 157, 0.3);
-            padding: 10px;
-            border-radius: 50%;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 107, 157, 0.5);
-            transition: all 0.3s;
         }
-
-        .music-control:hover {
-            transform: scale(1.2);
+        .music-icon { font-size: 1.5rem; animation: spin 4s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        /* Animations */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.3); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.3); }
+            70% { transform: scale(1); }
         }
-
-        @media (max-width: 768px) {
-            .title { font-size: 2.5em; }
-            .message-text { font-size: 1.1em; }
-            .sorry-text { font-size: 2.5em; }
-            .big-heart { font-size: 60px; }
-            .love-counter { font-size: 1.2em; padding: 10px 20px; }
-            .message-input-container { flex-direction: column; bottom: 100px; }
-            .message-input { width: 250px; }
-            .messages-container { width: 250px; right: 10px; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+        /* Confetti Canvas */
+        #confetti {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            .card { padding: 1.5rem; }
+            .heart-beat { font-size: 4rem; }
         }
     </style>
 </head>
 <body>
-    <div class="stars" id="stars"></div>
-    <div class="floating-hearts" id="hearts"></div>
-    
-    <div class="love-counter" id="loveCounter" onclick="sendLove()">
-        💕 Love Count: <span id="loveCount">0</span>
-    </div>
-    
-    <div class="music-control" id="musicControl" onclick="toggleMusic()">🔇</div>
-    
-    <div class="container">
-        <div class="main-content">
-            <h1 class="title" id="title">To The Best Girl In The World 💕</h1>
-            
-            <div class="photo-frame" id="photoFrame">
-                <div class="photo-placeholder">👑</div>
-            </div>
-            
-            <div class="message-box" id="messageBox">
-                <p class="message-text">
-                    My dearest love,<br><br>
-                    I know I made a mistake, and I take full responsibility for my actions. 
-                    You mean everything to me, and seeing you hurt because of me breaks my heart.<br><br>
-                    You deserve nothing but love, respect, and happiness - and I promise to do better.
-                </p>
-            </div>
-            
-            <div class="big-heart" id="bigHeart" onclick="sendLove()">❤️</div>
-            
-            <div class="sorry-text" id="sorryText">I'M SO SORRY</div>
-            
-            <div class="promise-section" id="promiseSection">
-                <div class="promise">✨ I promise to listen more carefully</div>
-                <div class="promise">✨ I promise to communicate better</div>
-                <div class="promise">✨ I promise to always cherish you</div>
-                <div class="promise">✨ I promise to never take you for granted</div>
-            </div>
-            
-            <div class="final-message" id="finalMessage">
-                You are my everything, my queen, my world 🌹
-                <div style="margin-top: 20px;">
-                    <span class="rose" id="rose1">🌹</span>
-                    <span class="rose" id="rose2">💐</span>
-                    <span class="rose" id="rose3">🌹</span>
-                </div>
-                <p style="font-size: 0.7em; margin-top: 30px; color: #ff6b9d;">
-                    I love you more than words can express<br>
-                    Forever yours 💍
-                </p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="message-input-container" id="messageInputContainer">
-        <input type="text" class="message-input" id="messageInput" placeholder="Send a love message..." maxlength="100">
-        <button class="send-btn" onclick="sendMessage()">Send 💕</button>
-    </div>
-    
-    <div class="messages-container" id="messagesContainer">
-        <h3 style="margin-bottom: 15px; color: #ffd700;">💌 Love Messages</h3>
-        <div id="messagesList"></div>
-    </div>
-    
-    <div class="progress-bar" id="progressBar"></div>
-    <div class="timer-text" id="timerText">0s / 30s</div>
-
-    <!-- Background music (optional) -->
+    <!-- Background Shapes -->
+    <div class="bg-shapes" id="bgShapes"></div>
+    <!-- Confetti -->
+    <canvas id="confetti"></canvas>
+    <!-- Music Player (Hidden Audio) -->
+    <!-- Replace 'your-song.mp3' with a direct link to an MP3 file if you have one hosted -->
     <audio id="bgMusic" loop>
-        <source src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7////////////////////////////////////////////////////////////AAAAAExhdmM1OC4xMzQAAAAAAAAAAAAAAAAkAAAAAAAAA4S/T4LKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7kGQAD/AAAGkAAAAIAAANIAAAAQAAAaQAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//uQZAoP8AAAaQAAAAgAAA0gAAABAAABpAAAACAAADSAAAAEVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mpeg">
+        <source src="" type="audio/mp3"> 
     </audio>
-
+    <div class="music-player" onclick="toggleMusic()">
+        <span class="music-icon">🎵</span>
+        <span id="musicText">Play Our Song</span>
+    </div>
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <img src="https://cdn-icons-png.flaticon.com/512/2921/2921226.png" alt="Crown" class="crown-img">
+            <h1>I'm So Sorry</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">To the best girl in the world...</p>
+            <div class="heart-beat" onclick="toggleMusic()">❤️</div>
+            <p>Scroll down, my love</p>
+        </section>
+        <!-- The Letter -->
+        <section class="card" id="letterCard">
+            <h2>My Dearest,</h2>
+            <div class="letter-content">
+                <span id="typewriter"></span><span class="cursor">&nbsp;</span>
+            </div>
+        </section>
+        <!-- Memories Gallery -->
+        <section class="card" id="galleryCard">
+            <h2>Us Against The World</h2>
+            <p>Every moment with you is a treasure.</p>
+            <div class="gallery">
+                <!-- REPLACE THESE SRC WITH YOUR OWN IMAGE URLS -->
+                <div class="photo-frame">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=300&q=80" alt="Memory 1">
+                </div>
+                <div class="photo-frame">
+                    <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=300&q=80" alt="Memory 2">
+                </div>
+                <div class="photo-frame">
+                    <img src="https://images.unsplash.com/photo-1518199266791-53707df181e0?auto=format&fit=crop&w=300&q=80" alt="Memory 3">
+                </div>
+            </div>
+        </section>
+        <!-- Promises -->
+        <section class="card" id="promisesCard">
+            <h2>I Promise To...</h2>
+            <ul style="list-style: none; text-align: left; margin-top: 1rem; line-height: 2;">
+                <li>✨ Listen more carefully</li>
+                <li>✨ Appreciate you every day</li>
+                <li>✨ Never take your smile for granted</li>
+                <li>✨ Love you harder than yesterday</li>
+            </ul>
+        </section>
+        <!-- The Big Question -->
+        <section class="card" id="questionCard">
+            <h2>Will you forgive me?</h2>
+            <div class="btn-group">
+                <button class="btn btn-yes" id="yesBtn" onclick="forgiveMe()">Yes, I forgive you! ❤️</button>
+                <button class="btn btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+            </div>
+        </section>
+        <!-- Success Message (Hidden initially) -->
+        <section class="card" id="successCard" style="display: none;">
+            <h1>YAY! I Love You! 🥰</h1>
+            <p>You just made me the happiest person alive.</p>
+            <div style="font-size: 4rem; margin-top: 1rem;">💑🌹💍</div>
+        </section>
+    </div>
     <script>
-        // Socket.IO connection
-        const socket = io();
-        
-        // Update love count
-        socket.on('loveCount', (count) => {
-            document.getElementById('loveCount').textContent = count;
-        });
-        
-        // Receive messages
-        socket.on('messages', (msgs) => {
-            const messagesList = document.getElementById('messagesList');
-            messagesList.innerHTML = '';
-            msgs.forEach(msg => addMessageToList(msg.text));
-        });
-        
-        socket.on('newMessage', (msg) => {
-            addMessageToList(msg.text);
-        });
-        
-        function sendLove() {
-            socket.emit('sendLove');
-            createBurstHearts();
+        // 1. Dynamic Background Shapes
+        const bgShapes = document.getElementById('bgShapes');
+        for(let i=0; i<15; i++) {
+            const shape = document.createElement('div');
+            shape.classList.add('shape');
+            const size = Math.random() * 50 + 20;
+            shape.style.width = `${size}px`;
+            shape.style.height = `${size}px`;
+            shape.style.left = `${Math.random() * 100}%`;
+            shape.style.animationDuration = `${Math.random() * 10 + 10}s`;
+            shape.style.animationDelay = `${Math.random() * 5}s`;
+            bgShapes.appendChild(shape);
         }
-        
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const text = input.value.trim();
-            if (text) {
-                socket.emit('sendMessage', { text });
-                input.value = '';
+        // 2. Typewriter Effect
+        const text = "I know I messed up, and I hate that I hurt you. You mean everything to me, and seeing you sad breaks my heart. I am truly sorry from the bottom of my soul. Please let me make it up to you. You are my queen, my best friend, and my forever love.";
+        const typeWriterElement = document.getElementById('typewriter');
+        let i = 0;
+        function typeWriter() {
+            if (i < text.length) {
+                typeWriterElement.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
             }
         }
-        
-        function addMessageToList(text) {
-            const messagesList = document.getElementById('messagesList');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message-item';
-            msgDiv.textContent = text;
-            messagesList.appendChild(msgDiv);
-            messagesList.scrollTop = messagesList.scrollHeight;
-        }
-        
-        let isPlaying = false;
-        function toggleMusic() {
-            const music = document.getElementById('bgMusic');
-            const control = document.getElementById('musicControl');
-            if (isPlaying) {
-                music.pause();
-                control.textContent = '🔇';
-            } else {
-                music.play().catch(() => {});
-                control.textContent = '🎵';
-            }
-            isPlaying = !isPlaying;
-        }
-        
-        function createBurstHearts() {
-            const heartsContainer = document.getElementById('hearts');
-            for (let i = 0; i < 20; i++) {
-                setTimeout(() => createHeart(), i * 50);
-            }
-        }
-
-        // Create stars
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 150; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.width = Math.random() * 3 + 1 + 'px';
-            star.style.height = star.style.width;
-            star.style.animationDelay = Math.random() * 2 + 's';
-            starsContainer.appendChild(star);
-        }
-
-        // Create floating hearts
-        const heartsContainer = document.getElementById('hearts');
-        const heartEmojis = ['❤️', '💕', '💖', '💗', '💓', '💞', '💘', '💝'];
-        
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
-            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
-            heartsContainer.appendChild(heart);
-            
-            setTimeout(() => {
-                heart.remove();
-            }, 5000);
-        }
-
-        // Animation timeline
-        const timeline = [
-            { time: 0, action: () => {
-                const title = document.getElementById('title');
-                title.style.transition = 'all 1.5s ease-out';
-                title.style.opacity = '1';
-                title.style.transform = 'translateY(0)';
-            }},
-            { time: 2000, action: () => {
-                const photoFrame = document.getElementById('photoFrame');
-                photoFrame.style.transition = 'all 1s ease-out';
-                photoFrame.style.opacity = '1';
-                photoFrame.style.transform = 'rotate(-10deg) scale(1)';
-            }},
-            { time: 4000, action: () => {
-                const messageBox = document.getElementById('messageBox');
-                messageBox.style.transition = 'all 1.5s ease-out';
-                messageBox.style.opacity = '1';
-                messageBox.style.transform = 'scale(1)';
-            }},
-            { time: 8000, action: () => {
-                const bigHeart = document.getElementById('bigHeart');
-                bigHeart.style.transition = 'all 1s ease-out';
-                bigHeart.style.opacity = '1';
-                bigHeart.style.transform = 'scale(1)';
-            }},
-            { time: 10000, action: () => {
-                const sorryText = document.getElementById('sorryText');
-                sorryText.style.transition = 'all 1.5s ease-out';
-                sorryText.style.opacity = '1';
-                sorryText.style.transform = 'translateY(0)';
-            }},
-            { time: 14000, action: () => {
-                const promiseSection = document.getElementById('promiseSection');
-                promiseSection.style.transition = 'all 1.5s ease-out';
-                promiseSection.style.opacity = '1';
-                promiseSection.style.transform = 'translateY(0)';
-            }},
-            { time: 20000, action: () => {
-                const finalMessage = document.getElementById('finalMessage');
-                finalMessage.style.transition = 'all 2s ease-out';
-                finalMessage.style.opacity = '1';
-                finalMessage.style.transform = 'scale(1)';
-            }},
-            { time: 22000, action: () => {
-                const rose1 = document.getElementById('rose1');
-                rose1.style.opacity = '1';
-            }},
-            { time: 23000, action: () => {
-                const rose2 = document.getElementById('rose2');
-                rose2.style.opacity = '1';
-            }},
-            { time: 24000, action: () => {
-                const rose3 = document.getElementById('rose3');
-                rose3.style.opacity = '1';
-            }},
-            { time: 26000, action: () => {
-                const messageInputContainer = document.getElementById('messageInputContainer');
-                messageInputContainer.style.opacity = '1';
-            }}
-        ];
-
-        // Mark timeline items as not executed
-        timeline.forEach(item => item.executed = false);
-
-        // Start animation
-        let startTime = Date.now();
-        let animationComplete = false;
-
-        function animate() {
-            if (animationComplete) return;
-
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / 30000, 1);
-            
-            // Update progress bar
-            document.getElementById('progressBar').style.width = (progress * 100) + '%';
-            document.getElementById('timerText').textContent = Math.floor(elapsed / 1000) + 's / 30s';
-
-            // Execute timeline actions
-            timeline.forEach(item => {
-                if (elapsed >= item.time && !item.executed) {
-                    item.action();
-                    item.executed = true;
+        // 3. Scroll Observer for Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    if (entry.target.id === 'letterCard') {
+                        typeWriter();
+                    }
                 }
             });
-
-            // Create hearts continuously
-            if (elapsed < 30000) {
-                if (Math.random() < 0.1) {
-                    createHeart();
-                }
-                requestAnimationFrame(animate);
+        }, { threshold: 0.2 });
+        document.querySelectorAll('.card').forEach(card => observer.observe(card));
+        // 4. Interactive "No" Button
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const x = Math.random() * (window.innerWidth - 100) - (window.innerWidth / 2 - 50);
+            const y = Math.random() * 200 - 100;
+            noBtn.style.transform = `translate(calc(-50% + ${x}px), ${y}px)`;
+        }
+        // 5. Forgive Me Action
+        function forgiveMe() {
+            document.getElementById('questionCard').style.display = 'none';
+            document.getElementById('successCard').style.display = 'block';
+            document.getElementById('successCard').classList.add('visible');
+            startConfetti();
+            // Auto scroll to success
+            document.getElementById('successCard').scrollIntoView({ behavior: 'smooth' });
+        }
+        // 6. Music Toggle
+        let isPlaying = false;
+        function toggleMusic() {
+            const audio = document.getElementById('bgMusic');
+            const text = document.getElementById('musicText');
+            // Note: Browsers block autoplay. User must interact first.
+            // Since we don't have a real file linked, this is a placeholder logic.
+            // In a real scenario, you would set audio.src and play/pause.
+            alert("Imagine our favorite song playing right now... 🎶 (Add an MP3 link in the code to enable real music!)");
+            
+            /* 
+            // Uncomment below if you have an MP3 link
+            if (!isPlaying) {
+                audio.play();
+                text.innerText = "Pause Music";
+                isPlaying = true;
             } else {
-                animationComplete = true;
-                document.getElementById('timerText').textContent = 'I Love You Forever 💕';
-                // Continue creating hearts even after animation
-                setInterval(createHeart, 500);
+                audio.pause();
+                text.innerText = "Play Music";
+                isPlaying = false;
             }
+            */
         }
-
-        // Initialize with some hearts
-        for (let i = 0; i < 10; i++) {
-            setTimeout(createHeart, i * 300);
+        // 7. Simple Confetti Logic
+        function startConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const pieces = [];
+            const colors = ['#ff4d6d', '#ff8fa3', '#fff0f3', '#ffd700'];
+            for (let i = 0; i < 300; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 3 + 2,
+                    angle: Math.random() * 360
+                });
+            }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.angle * Math.PI / 180);
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+                    
+                    p.y += p.speed;
+                    p.angle += 2;
+                    
+                    if (p.y > canvas.height) {
+                        p.y = -20;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
         }
-
-        // Start the main animation
-        setTimeout(animate, 1000);
-        
-        // Enter key to send message
-        document.getElementById('messageInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
     </script>
 </body>
 </html>
