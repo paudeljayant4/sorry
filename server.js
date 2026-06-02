@@ -1,59 +1,51 @@
 const express = require('express');
 const http = require('http');
-const socketIO = require('socket.io');
+const { Server } = require('socket.io');
 const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
-// Serve static files
-app.use(express.static(__dirname));
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve the main apology page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'apology.html'));
-});
-
-// Socket.IO for real-time love messages
-let loveCount = 0;
-const messages = [];
+// Store shared state
+let loveCount = 520; // Starting love count
+let messages = [];
 
 io.on('connection', (socket) => {
-    console.log('Someone opened the apology page! 💕');
+    console.log('A lover connected!');
     
-    // Send current love count
-    socket.emit('loveCount', loveCount);
-    socket.emit('messages', messages);
+    // Send current state to new client
+    socket.emit('init', { loveCount, messages });
     
-    // Handle sending love
-    socket.on('sendLove', () => {
+    // Handle new love clicks
+    socket.on('addLove', () => {
         loveCount++;
-        io.emit('loveCount', loveCount);
-        console.log(`Love count: ${loveCount}`);
+        io.emit('loveUpdated', loveCount);
     });
     
-    // Handle custom messages
+    // Handle new messages
     socket.on('sendMessage', (data) => {
-        const message = {
+        const newMessage = {
             text: data.text,
-            time: new Date().toLocaleTimeString(),
+            timestamp: new Date().toLocaleTimeString(),
             id: Date.now()
         };
-        messages.push(message);
-        if (messages.length > 10) messages.shift();
-        io.emit('newMessage', message);
-        console.log(`New message: ${data.text}`);
+        messages.push(newMessage);
+        if (messages.length > 10) messages.shift(); // Keep last 10
+        io.emit('newMessage', newMessage);
     });
     
     socket.on('disconnect', () => {
-        console.log('Someone left the page 💔');
+        console.log('User disconnected');
     });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🌹 Apology server running on http://localhost:${PORT}`);
-    console.log(`💕 Ready to win her heart!`);
+server.listen(PORT, () => {
+    console.log(`❤️  Apology server running at http://localhost:${PORT}`);
+    console.log('Ready to win her heart!');
 });

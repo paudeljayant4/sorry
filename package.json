@@ -1,13 +1,13 @@
 {
   "name": "apology-webpage",
   "version": "1.0.0",
-  "description": "The best apology webpage for the best girl in the world",
+  "description": "The best apology webpage for my amazing girlfriend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["apology", "love", "romantic"],
+  "keywords": ["apology", "love", "girlfriend"],
   "author": "",
   "license": "ISC",
   "dependencies": {
